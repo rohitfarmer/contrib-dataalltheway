@@ -1,0 +1,17 @@
+project:
+  output-dir: ../../docs/Julia
+  type: website
+
+website:
+  title: "Data All The Way in Julia"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+

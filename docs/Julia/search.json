@@ -1,0 +1,58 @@
+[
+  {
+    "objectID": "Parametric-Hypothesis-Tests.html",
+    "href": "Parametric-Hypothesis-Tests.html",
+    "title": "Parametric Hypothesis Tests",
+    "section": "",
+    "text": "import Pkg\nPkg.activate(\".\")\nusing CSV\nusing DataFrames\nusing Statistics\nusing HypothesisTests\n\n  Activating project at `~/Programs/Julia/contrib-dataalltheway/Julia/Quarto`"
+  },
+  {
+    "objectID": "Parametric-Hypothesis-Tests.html#unpaired-2-sample-z-test",
+    "href": "Parametric-Hypothesis-Tests.html#unpaired-2-sample-z-test",
+    "title": "Parametric Hypothesis Tests",
+    "section": "Unpaired 2 sample Z test",
+    "text": "Unpaired 2 sample Z test\n\nuneqvarztest = let\n    # Fetch a random sample of BMI data for women in the year 1985 and 2017\n    x1 = filter([:Sex, :Year] => (s, y) -> s==\"Women\" && y==1985 , data) |>\n        x -> x[!, :BMI] |> skipmissing |> collect |> x->rand(x, 300)\n    x2 = filter([:Sex, :Year] => (s, y) -> s==\"Women\" && y==2017 , data) |>\n        x -> x[!, :BMI] |> skipmissing |> collect |> x->rand(x, 300)\n    UnequalVarianceZTest(x1, x2)\nend\n\nTwo sample z-test (unequal variance)\n------------------------------------\nPopulation details:\n    parameter of interest:   Mean difference\n    value under h_0:         0\n    point estimate:          -2.269\n    95% confidence interval: (-2.697, -1.841)\n\nTest summary:\n    outcome with 95% confidence: reject h_0\n    two-sided p-value:           <1e-24\n\nDetails:\n    number of observations:   [300,300]\n    z-statistic:              -10.385691776458227\n    population standard error: 0.21847365094574273"
+  },
+  {
+    "objectID": "Parametric-Hypothesis-Tests.html#paired-2-sample-z-test",
+    "href": "Parametric-Hypothesis-Tests.html#paired-2-sample-z-test",
+    "title": "Parametric Hypothesis Tests",
+    "section": "Paired 2 sample Z test",
+    "text": "Paired 2 sample Z test\n\neqvarztest = let\n    # Fetch a random sample of BMI data for women in the year 1985 and 2017\n    x1 = filter([:Sex, :Year] => (s, y) -> s==\"Women\" && y==1985 , data) |>\n        x -> x[!, :BMI] |> skipmissing |> collect |> x->rand(x, 300)\n    x2 = filter([:Sex, :Year] => (s, y) -> s==\"Women\" && y==2017 , data) |>\n        x -> x[!, :BMI] |> skipmissing |> collect |> x->rand(x, 300)\n    EqualVarianceZTest(x1, x2)\nend\n\nTwo sample z-test (equal variance)\n----------------------------------\nPopulation details:\n    parameter of interest:   Mean difference\n    value under h_0:         0\n    point estimate:          -2.24267\n    95% confidence interval: (-2.684, -1.801)\n\nTest summary:\n    outcome with 95% confidence: reject h_0\n    two-sided p-value:           <1e-22\n\nDetails:\n    number of observations:   [300,300]\n    z-statistic:              -9.956287292435867\n    population standard error: 0.22525130109197353"
+  },
+  {
+    "objectID": "Parametric-Hypothesis-Tests.html#one-sample-t-test",
+    "href": "Parametric-Hypothesis-Tests.html#one-sample-t-test",
+    "title": "Parametric Hypothesis Tests",
+    "section": "One Sample T Test",
+    "text": "One Sample T Test\n\nonesamplettest = let \n    x1 = filter(\n        [:Sex, :Region, :Year] => \n            (s, r, y) -> s==\"Men\" && r==\"Rural\" && y == 2017,\n        data\n    ) |>\n    x -> x[!, :BMI] |> skipmissing |> collect |> x->rand(x, 300)\n    OneSampleTTest(x1, 24.5)\nend\n\nOne sample t-test\n-----------------\nPopulation details:\n    parameter of interest:   Mean\n    value under h_0:         24.5\n    point estimate:          24.9037\n    95% confidence interval: (24.6, 25.21)\n\nTest summary:\n    outcome with 95% confidence: reject h_0\n    two-sided p-value:           0.0092\n\nDetails:\n    number of observations:   300\n    t-statistic:              2.6205465342778123\n    degrees of freedom:       299\n    empirical standard error: 0.15403911412621082"
+  },
+  {
+    "objectID": "Parametric-Hypothesis-Tests.html#unpaired-2-sample-test",
+    "href": "Parametric-Hypothesis-Tests.html#unpaired-2-sample-test",
+    "title": "Parametric Hypothesis Tests",
+    "section": "Unpaired 2 Sample Test",
+    "text": "Unpaired 2 Sample Test\nunpairedtwosamplettest = let \n    x1 = filter([:Sex, :Region, :Year] => \n            (s, r, y) -> s==\"Women\" && r==\"Rural\" && y == 1985,\n        data) |>\n        x -> x[!, :BMI] |> skipmissing |> collect |> x->rand(x, 300)\n    x2 = filter([:Sex, :Region, :Year] => \n            (s, r, y) -> s==\"Women\" && r==\"Urban\" && y == 1985,\n        data) |>\n        x -> x[!, :BMI] |> skipmissing |> collect |> x->rand(x, 300)\n    x -> x[!, :BMI] |> skipmissing |> collect |> x->rand(x, 300)\n    UnequalVarianceTTest(x1, x2)\nend\n\n\n\n\n\n\nWelch’s Test\n\n\n\nThis test uses the Welch correction, and there is no way to turn it off in HypothesisTests.jl.\n\n\n\nOnly considering Right tailed\n\nunpairedtwosamplettest = let \n    x1 = filter([:Sex, :Region, :Year] => \n            (s, r, y) -> s==\"Women\" && r==\"Rural\" && y == 1985,\n        data) |>\n        x -> x[!, :BMI] |> skipmissing |> collect |> x->rand(x, 300)\n    x2 = filter([:Sex, :Region, :Year] => \n            (s, r, y) -> s==\"Women\" && r==\"Urban\" && y == 1985,\n        data) |>\n        x -> x[!, :BMI] |> skipmissing |> collect |> x->rand(x, 300)\n    x -> x[!, :BMI] |> skipmissing |> collect |> x->rand(x, 300)\n    UnequalVarianceTTest(x1, x2)\nend\npvalue(unpairedtwosamplettest, tail=:right)\n\n0.9999998338179024"
+  },
+  {
+    "objectID": "Parametric-Hypothesis-Tests.html#paired-2-sample-test",
+    "href": "Parametric-Hypothesis-Tests.html#paired-2-sample-test",
+    "title": "Parametric Hypothesis Tests",
+    "section": "Paired 2 Sample Test",
+    "text": "Paired 2 Sample Test\n\npairedtwosamplettest = let \n    x1 = filter([:Sex, :Region, :Year] => \n            (s, r, y) -> s==\"Women\" && r==\"Rural\" && y == 1985,\n        data) |>\n        x -> x[!, :BMI] |> skipmissing |> collect |> x->rand(x, 300)\n    x2 = filter([:Sex, :Region, :Year] => \n            (s, r, y) -> s==\"Women\" && r==\"Urban\" && y == 1985,\n        data) |>\n        x -> x[!, :BMI] |> skipmissing |> collect |> x->rand(x, 300)\n    x -> x[!, :BMI] |> skipmissing |> collect |> x->rand(x, 300)\n    EqualVarianceTTest(x1, x2)\nend\n\nTwo sample t-test (equal variance)\n----------------------------------\nPopulation details:\n    parameter of interest:   Mean difference\n    value under h_0:         0\n    point estimate:          -1.20733\n    95% confidence interval: (-1.642, -0.7725)\n\nTest summary:\n    outcome with 95% confidence: reject h_0\n    two-sided p-value:           <1e-07\n\nDetails:\n    number of observations:   [300,300]\n    t-statistic:              -5.452913438536617\n    degrees of freedom:       598\n    empirical standard error: 0.2214106911730724"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Data All The Way in Julia",
+    "section": "",
+    "text": "Welcome to Data All The Way"
+  },
+  {
+    "objectID": "index.html#featured-posts",
+    "href": "index.html#featured-posts",
+    "title": "Data All The Way in Julia",
+    "section": "Featured Posts",
+    "text": "Featured Posts"
+  }
+]
