@@ -2,7 +2,8 @@
   {
     "listing": "/index.html",
     "items": [
-      "/Parametric-Hypothesis-Tests.html"
+      "/posts/010-parametric-hypothesis-tests/index.html",
+      "/posts/011-non-parametric-hypothesis-tests/index.html"
     ]
   }
 ]

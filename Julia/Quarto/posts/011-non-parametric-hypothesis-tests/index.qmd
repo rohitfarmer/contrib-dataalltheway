@@ -1,0 +1,73 @@
+---
+title: Non-Parametric Hypothesis Tests
+author: 
+    - name: Dhruva Sambrani
+      orcid: 0000-0001-6254-4757
+format:
+  html:
+    code-fold: false
+jupyter: julia-1.8
+---
+
+
+# Import packages
+
+```{julia}
+import Pkg
+Pkg.activate(".")
+using CSV
+using Plots
+using HypothesisTests
+using DataFrames
+```
+
+# Import data and clean
+
+Dropping columns is a bit difficult in Julia. We find the whether a column is picked by checking if all the elements are not missing, and not 0. Thus, for `eachcol` of `data` we calculate whether `all` the elments are `!ismissing` `&&` `!=0`. Then we simply pick all rows (`!`) for those columns, and `disallowmissing` the data.
+
+```{julia}
+temp_file = download("https://zenodo.org/record/7081360/files/1.%20Cement_emissions_data.csv")
+data = CSV.read(temp_file, DataFrame)
+dropmissing!(data, :Year)
+filter!(:Year => >=(1928), data)
+picked_cols_mask = eachcol(data) .|> 
+    col -> all(x->(!ismissing(x) && x!=0), col)
+data = disallowmissing(data[!, picked_cols_mask])
+```
+
+```{julia}
+plot(
+	data[!, :Year], 
+	Array(log.(data[!, Not(:Year)])), 
+	label=reshape(string.(propertynames(data)[2:end]), 1, :),
+	legend= :outerright,
+	size=(900, 400)
+)
+```
+
+# Mann Whitney U Test
+
+```{julia}
+mwut_results = MannWhitneyUTest(data[!, :USA], data[!, :Canada], )
+```
+
+## Right tailed test
+
+```{julia}
+pvalue(mwut_results, tail=:right)
+```
+
+# Wilcoxen signed-rank test
+
+```{julia}
+dt = select(filter(:Year=> y-> y==2000 || y==2020, data), Not(:Year))
+x = collect(dt[1, :])
+y = collect(dt[2, :])
+SignedRankTest(x, y)
+```
+
+# Kruskal Wallis test
+
+```{julia}
+KruskalWallisTest(collect(eachcol(data[:, Not(:Year)]))...)
+```
