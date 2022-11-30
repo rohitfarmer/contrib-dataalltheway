@@ -14,5 +14,5 @@ listing:
   type: grid
   sort: "date desc"
   contents:
-    - "*.qmd"
+    - "posts/*/*.qmd"
 ---
