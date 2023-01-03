@@ -153,4 +153,22 @@ Ftest = let
 	VarianceFTest(x1, x2)
 end
 ```
+# Anova test
+
+```{julia}
+Atest = let
+	x = filter([:Sex, :Year] => (s,y) -> (s=="Men" && y==2017), data)
+	groups = groupby(x, :Region)
+	bmis = map(keys(groups)) do key # for each group, 
+		collect(skipmissing(groups[key][!, :BMI])) # collect BMI, skipping missing values
+	end
+	res = OneWayANOVATest(bmis...)
+end
+```
+
+::: {.callout-warning}
+## Tukey's HSD Test
+
+Currently, there is no implementation of this test in `HypothesisTests.jl`
+:::
 
